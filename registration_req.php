@@ -1,77 +1,62 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include 'connect.php'; 
+    include 'connect.php';
 
+    // Sanitize and validate inputs
+    $firstName = htmlspecialchars(trim($_POST['firstName']));
+    $lastName = htmlspecialchars(trim($_POST['lastName']));
+    $position = htmlspecialchars(trim($_POST['position']));
+    $gender = htmlspecialchars(trim($_POST['gender']));
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $mobile = htmlspecialchars(trim($_POST['mobile']));
+    $telephone = htmlspecialchars(trim($_POST['telephone']));
+    $address = htmlspecialchars(trim($_POST['address']));
+    $institute = htmlspecialchars(trim($_POST['institute']));
+    $instituteCode = htmlspecialchars(trim($_POST['instituteCode']));
+    $username = htmlspecialchars(trim($_POST['username']));
+    $password = htmlspecialchars(trim($_POST['password']));
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        header("Location: signup.php?message=Invalid email format");
+        exit();
+    }
+
+
+
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register_me'])) {
+        $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
+        $sql = "INSERT INTO registration (firstName, lastName, email, username, password, role) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssss", $_POST['firstName'], $_POST['lastName'], $_POST['email'], $_POST['username'], $hashedPassword, $_POST['role']);
+        if ($stmt->execute()) {
+            header("Location: signup.php?message=Registration successful.");
+        } else {
+            echo "Error: Could not register user.";
+        }
+    }
     
-    $firstName = isset($_POST['firstName']) ? $_POST['firstName'] : '';
-    $lastName = isset($_POST['lastName']) ? $_POST['lastName'] : '';
-    $position = isset($_POST['position']) ? $_POST['position'] : '';
-    $gender = isset($_POST['Gender']) ? $_POST['Gender'] : '';
-    $email = isset($_POST['email']) ? $_POST['email'] : '';
-    $mobile = isset($_POST['mobile']) ? $_POST['mobile'] : '';
-    $telephone = isset($_POST['telephone']) ? $_POST['telephone'] : '';
-    $address = isset($_POST['address']) ? $_POST['address'] : '';
-    $institute = isset($_POST['institute']) ? $_POST['institute'] : '';
-    $instituteCode = isset($_POST['instituteCode']) ? $_POST['instituteCode'] : '';
-    $username = isset($_POST['username']) ? $_POST['username'] : '';
-    $password = password_hash($password, PASSWORD_BCRYPT);
 
 
-    if (!empty($firstName) && !empty($lastName) && !empty($email) && !empty($username) && !empty($password)) 
-    {
-        
+
+
+    if (!empty($firstName) && !empty($lastName) && !empty($email) && !empty($username) && !empty($password)) {
+        $password = password_hash($password, PASSWORD_BCRYPT);
 
         $sql = $conn->prepare("INSERT INTO registration (firstName, lastName, position, gender, email, mobile, telephone, address, institute, instituteCode, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $sql->bind_param("ssssssssssss", $firstName, $lastName, $position, $gender, $email, $mobile, $telephone, $address, $institute, $instituteCode, $username, $password);
+
         if ($sql->execute()) {
-            header("Location: login.php?message=request sent successfully");
-            exit();
+            header("Location: signup.php?message=Request sent successfully");
         } else {
-            echo "Error: " . $sql->error;
+            header("Location: signup.php?message=Error: Could not process your request");
         }
 
+        $sql->close();
         $conn->close();
+        exit();
     } else {
-        echo "Please fill in all required fields.";
+        header("Location: signup.php?message=Please fill in all required fields");
     }
-
-        
-
-$conn->close();
-exit();
-       
-
 }
-
-
-
-//     //alert for the successfully recorded user
-//     if ($conn->query($sql) === TRUE) 
-//     {
-//         echo '<script type="text/javascript">
-//         window.onload=function()
-//         {
-//             alert("New record created successfully");
-//         }
-//         </script>';
-
-//         // Redirect to login page after successful signup
-//         header("Location: login.php?message=request sent successfully");
-//         exit();
-//     } else {
-//         echo "Error: " . $sql . "<br>" . $conn->error;
-//     }
-// } 
-
-
-
-
-
-//===============
-// //        $conn->close();
-// } else {
-//     echo "Please fill in all required fields.";
-// }
-
-
-
+?>
