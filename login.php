@@ -1,4 +1,6 @@
+
 <?php
+//login.php
 // Include the database connection file
 include 'connect.php';
 
@@ -7,11 +9,11 @@ session_start();
 
 // Check if the form is submitted
 if (isset($_POST['login'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = htmlspecialchars(trim($_POST['username']));
+    $password = trim($_POST['password']);
 
     // Prepare the SQL query to retrieve the user
-    $sql = "SELECT * FROM users WHERE LOWER(username) = LOWER(?)";
+    $sql = "SELECT * FROM users WHERE username = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -29,7 +31,7 @@ if (isset($_POST['login'])) {
             $_SESSION['role'] = $user['role'];
 
             // Redirect to the dashboard or another page
-            header("Location: dashboard.php");
+            header("Location: view_reg_users.php");
             exit();
         } else {
             $error_message = "Invalid username or password.";
@@ -43,8 +45,6 @@ if (isset($_POST['login'])) {
 
 $conn->close();
 ?>
-
-
 
 
 <!DOCTYPE html>
@@ -102,7 +102,7 @@ $conn->close();
 <br><br>
 <div class="row align-items-center position-absolute top-50 start-50 translate-middle row align-items-center">
 
-    <form method="POST" class="card-body card col-md-5 mb-7"  style=" align-content:center; padding-top:10px; padding-bottom:40px; padding-left:40px; padding-right:40px;">
+    <form method="POST" action="login.php" class="card-body card col-md-5 mb-7"  style=" align-content:center; padding-top:10px; padding-bottom:40px; padding-left:40px; padding-right:40px;">
 
         <h1 class="mt-4 mb-4">Login</h1>
 
