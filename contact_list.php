@@ -20,7 +20,6 @@
 
 
     <script>
-        
         window.onload = function() {
             var message = "<?php echo isset($_GET['message']) ? $_GET['message'] : ''; ?>";
             if (message !== '') {
