@@ -1,3 +1,19 @@
+<script>
+    // Client-side validation for signup form
+    document.querySelector('form').onsubmit = function(e) {
+        const requiredFields = ['firstName', 'lastName', 'email', 'username', 'password'];
+        for (let field of requiredFields) {
+            if (document.getElementById(field).value.trim() === '') {
+                alert(`${field} is required`);
+                e.preventDefault();
+                return false;
+            }
+        }
+        return true;
+    };
+</script>
+
+
 
 <!doctype html>
 <html lang="en">
@@ -38,9 +54,9 @@
             <div class="col-md-3">
                 <label for="gender" class="form-label">Gender</label>
                   <br>        
-                <input type="radio" id="male" name="Gender" value="male" class="form-check-input" required>
+                <input type="radio" id="male" name="gender" value="male" class="form-check-input" required>
                 <label for="male">Male</label> <br>
-                <input type="radio" id="female" name="Gender" value="female" class="form-check-input">
+                <input type="radio" id="female" name="gender" value="female" class="form-check-input">
                 <label for="female">Female</label>
             </div>
             <div class="col-md-12">
@@ -109,3 +125,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
+
+<?php
+if (isset($_GET['message'])) {
+    echo "<script>
+        alert('" . htmlspecialchars($_GET['message'], ENT_QUOTES, 'UTF-8') . "');
+    </script>";
+}
+?>
